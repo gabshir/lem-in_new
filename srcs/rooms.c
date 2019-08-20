@@ -14,8 +14,6 @@ void 	ents(t_map *map, int fd)
 			continue;
 		}
 		map->ents = ft_mini_atoi(str);
-		free(str);
-		str = NULL;
 	}
 }
 
