@@ -21,15 +21,27 @@ typedef struct	s_room
 
 typedef struct	s_map
 {
+	int 	ents;
 	t_room	**room;
 	t_room	*start;
 	t_room	*end;
 	t_list	*fist_rooms_create;
-	int 	ents;
+	char 	*fist_link;
 	unsigned max_room;
 	t_list	*combination;
 
 }				t_map;
 
+/*
+* tools
+*/
+
+int		ft_mini_atoi(char *line);
+int		comments(const char *str);
+void	ft_error(void);
+void	components(char **room, int f);
+
+
+void	rooms_in_mass(t_map *map, int fd);
 
 #endif
