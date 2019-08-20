@@ -22,10 +22,14 @@ int		ft_mini_atoi(char *line)
 	return (ents);
 }
 
-int comments(const char *str)
+int comments(char *str)
 {
 	if (str[0] == '#' && (str[1] != '#' || !str[1]))
+	{
+		free(str);
+		str = NULL;
 		return (1);
+	}
 	return (0);
 }
 

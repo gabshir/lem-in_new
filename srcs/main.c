@@ -1,6 +1,23 @@
 #include <zconf.h>
 #include "lem_in.h"
 
+void 	ents(t_map *map, int fd)
+{
+	char *str;
+
+	str = NULL;
+	while(map->ents == 0 && get_next_line(fd, &str))
+	{
+		if (comments(str))
+		{
+			free(str);
+			str = NULL;
+			continue;
+		}
+		map->ents = ft_mini_atoi(str);
+	}
+}
+
 void 	ft_sort_array(t_map *map)
 {
 	unsigned	i;
@@ -24,21 +41,16 @@ void 	ft_sort_array(t_map *map)
 t_room	*seach_room(t_room **rooms, unsigned i, unsigned j, char *name)
 {
 	unsigned p;
-	t_room *temp;
 
 	p = (i + j)/2;
-	temp = NULL;
 	if (!ft_strcmp(name, rooms[p]->name))
-	{
-		temp = rooms[p];
-		return (temp);
-	}
+		return (rooms[p]);
+	else if (i == j)
+		ft_error();
 	else if (ft_strcmp(name, rooms[p]->name) > 0)
 		return (seach_room(rooms, p, j, name));
 	else if (ft_strcmp(name, rooms[p]->name) < 0)
 		return (seach_room(rooms, i, p, name));
-	else if (i == j)
-		ft_error();
 	return (NULL);
 }
 
@@ -62,26 +74,6 @@ void 	create_links(t_map *map, char *str)
 	str = NULL;
 }
 
-void	connection_check(t_map *map, int fd)
-{
-	char *str;
-
-	str = NULL;
-	while(get_next_line(fd, &str))
-	{
-		if (comments(str))
-		{
-			free(str);
-			str = NULL;
-			continue;
-		}
-		else if (ft_strrchr(str, '-'))
-			create_links(map, str);
-		else
-			ft_error();
-	}
-}
-
 int				main(int a, char **b)
 {
 	int fd;
@@ -89,8 +81,7 @@ int				main(int a, char **b)
 
 	fd = ft_read_file(b[1]);
 	ft_bzero(&map, sizeof(map));
-	rooms_in_mass(&map, fd);
-	ft_sort_array(&map);
-	connection_check(&map, fd);
+	ents(&map, fd);
+	rooms(&map, fd);
 	return (0);
 }

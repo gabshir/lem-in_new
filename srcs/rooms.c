@@ -1,22 +1,5 @@
 #include "lem_in.h"
 
-void 	ents(t_map *map, int fd)
-{
-	char *str;
-
-	str = NULL;
-	while(map->ents == 0 && get_next_line(fd, &str))
-	{
-		if (comments(str))
-		{
-			free(str);
-			str = NULL;
-			continue;
-		}
-		map->ents = ft_mini_atoi(str);
-	}
-}
-
 t_room	*create_room(char **room)
 {
 	t_room	*create;
@@ -37,10 +20,8 @@ void	ft_start(t_map *map, int fd, char *str)
 
 	room = NULL;
 	map->start ? ft_error() : 0;
-	while(get_next_line(fd, &str) && comments(str))
+	while (get_next_line(fd, &str) && comments(str))
 	{
-		free(str);
-		str = NULL;
 	}
 	room = ft_strsplit(str, ' ');
 	room ? components(room, 1) : ft_error();
@@ -58,8 +39,6 @@ void	ft_end(t_map *map, int fd, char *str)
 	map->end ? ft_error() : 0;
 	while(get_next_line(fd, &str) && comments(str))
 	{
-		free(str);
-		str = NULL;
 	}
 	room = ft_strsplit(str, ' ');
 	room ? components(room, 1) : ft_error();
@@ -102,36 +81,13 @@ int	ft_start_and_end(t_map *map, int fd, char *str)
 	return (0);
 }
 
-void rooms(t_map *map, int fd)
-{
-	char *str;
-
-	str = NULL;
-	while(get_next_line(fd, &str))
-	{
-		if (comments(str))
-		{
-			free(str);
-			str = NULL;
-			continue;
-		}
-		else if (ft_start_and_end(map, fd, str))
-			continue;
-		else if (ft_strrchr(str, ' '))
-			over_room(map, str);
-		else break;
-	}
-	map->fist_link = str;
-}
-
-void	rooms_in_mass(t_map *map, int fd)
+void	rooms_in_array(t_map *map, int *f)
 {
 	t_list *temp;
 	unsigned i;
 
-	ents(map, fd);
-	rooms(map, fd);
 	i = 0;
+	f[0] = 1;
 	temp = map->fist_rooms_create;
 	if(!(map->room = ft_memalloc(sizeof(t_room *) * map->max_room + 1)))
 		exit(1);
@@ -143,4 +99,35 @@ void	rooms_in_mass(t_map *map, int fd)
 	}
 	free(map->fist_rooms_create);
 	map->fist_rooms_create = NULL;
+	//тут должна быть проверка на одинаковые комнаты
+	ft_sort_array(map);
 }
+
+void rooms(t_map *map, int fd)
+{
+	char *str;
+	int f;
+
+	str = NULL;
+	f = 0;
+	while(get_next_line(fd, &str))
+	{
+		if (comments(str))
+			continue;
+		else if (!f && ft_start_and_end(map, fd, str))
+			continue;
+		else if (!f && ft_strrchr(str, ' '))
+			over_room(map, str);
+		else if (!f && ft_strrchr(str, '-'))
+		{
+			rooms_in_array(map, &f);
+			create_links(map, str);
+		}
+		else if (f && ft_strrchr(str, '-'))
+			create_links(map, str);
+		else
+			ft_error();
+	}
+}
+
+
