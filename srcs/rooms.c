@@ -101,6 +101,12 @@ void	rooms_in_array(t_map *map, int *f)
 	map->fist_rooms_create = NULL;
 	//тут должна быть проверка на одинаковые комнаты
 	ft_sort_array(map);
+	i = 0;
+	while (i < map->max_room)
+	{
+		map->room[i]->n = i;
+		++i;
+	}
 }
 
 void rooms(t_map *map, int fd)

@@ -74,6 +74,20 @@ void 	create_links(t_map *map, char *str)
 	str = NULL;
 }
 
+void	test_print(t_list *test)
+{
+	t_list *temp;
+	t_room	*read;
+
+	temp = test->content;
+	while (temp)
+	{
+		read = temp->content;
+		ft_printf("%s\n", read->name);
+		temp = temp->next;
+	}
+}
+
 int				main(int a, char **b)
 {
 	int fd;
@@ -83,5 +97,8 @@ int				main(int a, char **b)
 	ft_bzero(&map, sizeof(map));
 	ents(&map, fd);
 	rooms(&map, fd);
+	bfs(&map);
+	patch(&map);
+	test_print(map.fist_rooms_create);
 	return (0);
 }
