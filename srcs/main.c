@@ -97,8 +97,11 @@ int				main(int a, char **b)
 	ft_bzero(&map, sizeof(map));
 	ents(&map, fd);
 	rooms(&map, fd);
-	bfs(&map);
-	patch(&map);
+	while (bfs(&map))
+	{
+		patch(&map);
+		restor_room(&map);
+	}
 	test_print(map.fist_rooms_create);
 	return (0);
 }

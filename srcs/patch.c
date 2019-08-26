@@ -2,10 +2,10 @@
 
 void	patch(t_map *map)
 {
-	t_list	*way;
-	t_list	*temp;
-	t_room	*read;
-	unsigned 	gl;
+	t_list		*way;
+	t_list		*temp;
+	t_room		*read;
+	unsigned	gl;
 
 	way = NULL;
 	temp = map->end->links;
@@ -13,6 +13,7 @@ void	patch(t_map *map)
 	while (temp && gl)
 	{
 		read = temp->content;
+		temp->content_size = 0; // блокировка направления
 		if (read->gl == gl)
 		{
 			ft_lstadd(&way, ft_lstnew_ptr(read));
