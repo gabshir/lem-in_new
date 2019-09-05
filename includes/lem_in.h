@@ -68,12 +68,9 @@ void			restore_room(t_map *map);
 
 void			patch(t_map *map);
 int				way_cut(t_map *map);
-void			lenways(t_list *tmp, int i, int ants, t_ind *index, t_list *temp_save);
+void			lenways(t_list *tmp, int i, int ants, t_ind *index);
 int				lenways1(t_list *tmp, int i, int ants);
 int				len_ant_way(t_list **list, int i, int ants);
-t_list			**recharge(t_ind *ind);
-void			par_rooms(t_room *finish, t_list **list, int ants);
-void			print_ants(t_list *list, t_room *finish);
-int				check_zero(t_list *list);
+void			unpacking(t_map *map, t_ind *ind);
 
 #endif

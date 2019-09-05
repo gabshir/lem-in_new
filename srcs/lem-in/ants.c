@@ -17,111 +17,28 @@ void 	ants(t_map *map, int fd)
 	}
 }
 
-void	print_ants(t_list *list, t_room *finish)
+
+int		lenways1(t_list *lst, int i, int ants)
 {
-	t_list *temp;
-	t_room *read;
-	t_list *up;
-
-	temp = list;
-	read = temp->content;
-	while (temp && !read->ant_num)
-	{
-		read = temp->content;
-		up = temp;
-		temp = temp->next;
-	}
-	while(temp && read->ant_num)
-	{
-		up = temp;
-		read = temp->content;
-		temp = temp->next;
-	}
-	if (!temp)
-	{
-		++finish->ant_num;
-
-	}
-
-}
-
-void	par_rooms(t_room *finish, t_list **list, int ants)
-{
-	t_room	*room;
-	// t_list	*tmp;
-	int		ant_i;
-	int 	j;
-	
-	ant_i = 1;
-	while (finish->ant_num != ants)
-	{
-		j = 0;
-		ft_putchar('\n');
-
-		while (list[j]) // not like this
-		{
-			room = list[j]->content;
-			room->ant_num = ant_i;
-			++j;
-			++ant_i;
-		}
-	}
-}
-
-t_list	**recharge(t_ind *ind)
-{
-	t_list	**list;
 	t_list	*tmp;
-	t_list	*cont;
-
-	if (!(list = ft_memalloc(sizeof(t_list *) * (ind->count_ways + 1))))
-		exit(1);
-	tmp = ind->all_ways;
-	while (ind->count_ways)
-	{
-		cont = tmp->content;
-		list[--ind->count_ways] = cont;
-		tmp = tmp->next;
-	}
-	return (list);
-}
-
-int		len_ant_way(t_list **list, int i, int ants)
-{
 	int		len;
 	int		was;
-	int		j;
+	t_list *list;
 
 	was = i;
 	len = 0;
-	j = 0;
-	while (j != i)
-	{
-		len += ft_lstlen(list[j]) + 2;
-		++j;
-	}
-	return ((len - 1 + ants) / was);
-}
-
-int		lenways1(t_list *tmp, int i, int ants)
-{
-	t_list	*list;
-	int		len;
-	int		was;
-
-	was = i;
-	len = 0;
+	tmp = lst;
 	while (i)
 	{
 		list = tmp->content;
 		len += ft_lstlen(list) + 2;
-		list = tmp->next;
+		tmp = tmp->next;
 		--i;
 	}
 	return ((len - 1 + ants) / was);
 }
 
-void	lenways(t_list *tmp, int i, int ants, t_ind *index, t_list *temp_save)
+void	lenways(t_list *tmp, int i, int ants, t_ind *index)
 {
 	int		ind;
 
@@ -130,7 +47,106 @@ void	lenways(t_list *tmp, int i, int ants, t_ind *index, t_list *temp_save)
 	{
 		index->index_ram = ind;
 		index->count_ways = i;
-		index->all_ways = temp_save;
+		index->all_ways = tmp;
 	}
 	// ft_printf("%d\n", index->index_ram); //
+}
+
+
+void	way_ants(t_room *finish, t_list *way)
+{
+	t_list	*tmp;
+	t_room	*read;
+	t_room	*up_num;
+	int		f;
+
+	f = 1;
+	tmp = way;
+	while (f && tmp)
+	{
+		tmp = way;
+		read = tmp->content;
+		f = 0;
+		while (tmp && !read->ant_num)
+		{
+			read = tmp->content;
+			tmp = tmp->next;
+		}
+		while (tmp && read->ant_num)
+		{
+			read = tmp->content;
+			tmp = tmp->next;
+		}
+		if (tmp && tmp->next)
+		{
+			up_num = tmp->next->content;
+			up_num->ant_num = read->ant_num;
+			read->ant_num = 0;
+			ft_printf("L%d - %s ", up_num->ant_num, up_num->name);
+			f = 1;
+		}
+		if (tmp && !tmp->next)
+		{
+
+			ft_printf("L%d - %s ", read->ant_num, read->name);
+			read->ant_num = 0;
+			++finish->ant_num;
+			f = 1;
+		}
+	}
+}
+
+void	print_ants(t_room *start, t_room *finish, t_ind *combo, int ants)
+{
+	t_list	*tmp;
+	t_room	*read;
+	int		ant_num;
+
+	ant_num = 1;
+	start->ant_num = ant_num;
+	while (finish->ant_num != ants)
+	{
+		ft_putchar('\n');
+		//размещение муравьев
+		tmp = combo->all_ways;
+		while (tmp)
+		{
+			way_ants(finish, tmp->content);
+			tmp = tmp->next;
+		}
+
+		while (combo->count_ways && start->ant_num)
+		{
+			read = tmp->content;
+			read->ant_num = ant_num;
+			ft_printf("L%d - %s ",read->ant_num, read->name);
+			--combo->count_ways;
+			--start->ant_num;
+		}
+
+	}
+}
+
+void	unpacking(t_map *map, t_ind *ind)
+{
+	t_list	*tmp;
+	t_list	*st;
+	int		index;
+	int 	len_comb;
+
+	index = 1;
+	st = map->combination;
+	while (st)
+	{
+		tmp = st->content;
+		len_comb = ft_lstlen(tmp);
+		while (len_comb)
+		{
+			lenways(tmp, index++, map->ants, ind);
+			--len_comb;
+		}
+		st = st->next;
+	}
+	// print_ways(ind);
+//	par_rooms(map->end, list, map->ants);
 }

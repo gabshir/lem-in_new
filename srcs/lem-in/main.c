@@ -98,32 +98,6 @@ void	test_print(t_list *test)
 // 	}
 // }
 
-static void	unpacking(t_map *map, t_ind *ind)
-{
-	t_list	*tmp;
-	t_list	*st;
-	int		index;
-	t_list	*temp_save;
-	t_list	**list;
-	
-	index = 1;
-	st = map->combination;
-	while (st)
-	{
-		tmp = st->content;
-		temp_save = tmp;
-		while (tmp)
-		{
-			lenways(tmp, index++, map->ants, ind, temp_save);
-			tmp = tmp->next;
-		}
-		st = st->next;
-	}
-	// print_ways(ind);
-	list = recharge(ind);
-	par_rooms(map->end, list, map->ants);
-}
-
 int				main(int argc, char **argv)
 {
 	int		fd;
