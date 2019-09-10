@@ -26,7 +26,6 @@ typedef struct	s_map
 	t_room		*start;
 	t_room		*end;
 	t_list		*first_room_create;
-	char		*first_link;
 	unsigned	max_room;
 	t_list		*combination;
 }				t_map;
@@ -38,7 +37,13 @@ typedef struct	s_ind
 	int			index_ram;
 }				t_ind;
 
-int				main(int argc, char **argv);
+typedef struct	s_way
+{
+	int 		i;
+	t_room		**room;
+}				t_way;
+
+//int				main(int argc, char **argv);
 
 void 			ants(t_map *map, int fd);
 int				comments(char *str);
@@ -48,7 +53,6 @@ void			ft_clean_strstr(char **str);
 
 void			rooms(t_map *map, int fd);
 int				ft_start_and_end(t_map *map, int fd, char *str);
-void			ft_starts(t_map *map, int fd, char *str);
 void			components(char **room, int f);
 t_room			*create_room(char **room);
 void			ft_end(t_map *map, int fd, char *str);
@@ -67,10 +71,20 @@ void			last_free(t_list *combination, t_list *new_combination);
 void			restore_room(t_map *map);
 
 void			patch(t_map *map);
-int				way_cut(t_map *map);
 void			lenways(t_list *tmp, int i, int ants, t_ind *index);
 int				lenways1(t_list *tmp, int i, int ants);
-int				len_ant_way(t_list **list, int i, int ants);
 void			unpacking(t_map *map, t_ind *ind);
+
+void			print_ants_on_way(t_way **all, t_room *finish, int ants, t_ind *ind);
+void			combo(t_list *tmp, t_ind *ind, int ants);
+void			print_ants_on_one_way(t_way *way, t_room *finish);
+t_way			**way_transform(t_ind *ind);
+t_room			**room_way_in_array(t_list *way, t_way *link);
+
+void			free_array(t_way **all);
+void			free_map(t_map *map);
+void			free_way(t_list *combo);
+void			free_combination(t_list *combo);
+
 
 #endif
